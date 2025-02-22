@@ -1,0 +1,5 @@
+venv/
+.env.local
+.env.production
+.idea/
+*.iml
