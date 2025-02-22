@@ -1,0 +1,28 @@
+name: Fetch & Store Yield Curve Data
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Runs every Monday at 00:00 UTC
+  workflow_dispatch:  # Allows manual trigger
+
+jobs:
+  fetch-yield-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Load Environment Variables
+        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Fetch & Store Yield Data
+        run: python backend/fetch_store_yields.py
