@@ -24,5 +24,27 @@ jobs:
       - name: Load Environment Variables
         run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
 
+      - name: Test Database Connection
+        run: |
+          python -c "
+          import psycopg2
+          import os
+          DATABASE_URL = os.getenv('DATABASE_URL')
+          try:
+              conn = psycopg2.connect(DATABASE_URL)
+              print('✅ Database connection successful!')
+          except Exception as e:
+              print(f'❌ Database connection failed: {e}')
+          "
+
+      - name: Debug XML Response
+        run: |
+          python -c "
+          import requests
+          url = 'https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=all&page=0'
+          response = requests.get(url)
+          print(response.text)
+          "
+
       - name: Fetch & Store Yield Data
         run: python backend/fetch_store_yields.py
